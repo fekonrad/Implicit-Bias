@@ -3,6 +3,9 @@ from torch.optim import Optimizer
 
 
 class pGradientDescent(Optimizer):
+  """
+      Implementation from https://arxiv.org/pdf/2306.13853v1.pdf Appendix H  
+  """
   def __init__(self, params, p=2.0, lr=1e-3):
     if p <= 1:
       raise ValueError(f"Invalid p: {p}, should be larger than 1")
