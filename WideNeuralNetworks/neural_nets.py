@@ -67,3 +67,53 @@ class TwoLayerReLU_ASI(nn.Module):
     def forward(self, x):
         return (np.sqrt(2)/2)*(self.features1(x) - self.features2(x))
 
+
+class LinearNetwork(nn.Module):
+  def __init__(self, dimensions):
+    """
+      - dimensions: list of integers representing the number of neurons in each hidden layer
+                    dimensions[0] has to be equal to the input dimension
+                    dimensions[-1] has to be equal to the output dimension
+    """
+    super().__init__()
+    self.layers = nn.ModuleList()
+    for i in range(1, len(dimensions)):
+        self.layers.append(nn.Linear(dimensions[i-1], dimensions[i], bias=False))   # homogeneous model, no bias
+
+  def parameter_norm(self, p):
+          norm = 0.0
+          for param in self.parameters():
+              norm += torch.pow(torch.abs(param), p).sum()   
+          return np.power(norm.item(), 1/p)
+
+  def forward(self, x):
+    output = x
+    for layer in self.layers:
+      output = layer(output)
+    return output
+
+
+class FCN(nn.Module):
+  def __init__(self, dimensions):
+    """
+      - dimensions: list of integers representing the number of neurons in each hidden layer
+                    dimensions[0] has to be equal to the input dimension
+                    dimensions[-1] has to be equal to the output dimension
+    """
+    super().__init__()
+    self.layers = nn.ModuleList()
+    for i in range(1, len(dimensions)):
+        self.layers.append(nn.Linear(dimensions[i-1], dimensions[i], bias=False))   # homogeneous model, no bias
+
+  def parameter_norm(self, p):
+          norm = 0.0
+          for param in self.parameters():
+              norm += torch.pow(torch.abs(param), p).sum()   
+          return np.power(norm.item(), 1/p)
+
+
+  def forward(self, x):
+    output = x
+    for layer in self.layers:
+      output = nn.ReLU(layer(output))
+    return output
